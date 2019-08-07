@@ -5,8 +5,19 @@
 *.so
 *.dylib
 
+# Do not commit local initialization scripts
+init/
+
 # Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# IDEs
+.idea
+.vscode
+
+# Aliyun
+.ossutil_checkpoint
+aliyun-nuke
