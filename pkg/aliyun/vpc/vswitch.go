@@ -13,7 +13,6 @@ type VSwitch struct {
 	vpc.VSwitch
 }
 
-
 // String outputs name of the service
 func (v VSwitches) String() string {
 	return "ECS instance"

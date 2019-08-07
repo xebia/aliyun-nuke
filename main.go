@@ -16,7 +16,7 @@ func main() {
 		},
 	}
 
-	deleted := nuker.Nuke(currentAccount)
+	deleted := nuker.NukeItAll(currentAccount)
 	for _, resource := range deleted {
 		fmt.Println(resource)
 	}

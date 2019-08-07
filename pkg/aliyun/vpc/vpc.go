@@ -13,7 +13,6 @@ type Vpc struct {
 	vpc.Vpc
 }
 
-
 // String outputs name of the service
 func (v Vpcs) String() string {
 	return "ECS instance"

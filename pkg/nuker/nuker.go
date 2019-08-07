@@ -10,9 +10,8 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-// Nuke actually removes all resources in a loop. It will keep on going until no resources
-// were deleted any more.
-func Nuke(currentAccount account.Account) []cloud.Resource {
+// NukeItAll will Nuke(delete) all AliBaba services in all regions
+func NukeItAll(currentAccount account.Account) []cloud.Resource {
 	services := []cloud.Service{
 		oss.Buckets{},
 		ecs.Instances{},
@@ -20,14 +19,19 @@ func Nuke(currentAccount account.Account) []cloud.Resource {
 		vpc.Vpcs{},
 		vpc.VSwitches{},
 	}
+	return Nuke(currentAccount, services, account.Regions)
+}
 
+// Nuke actually removes all resources in a loop. It will keep on going until no resources
+// were deleted any more.
+func Nuke(currentAccount account.Account, services []cloud.Service, regions []account.Region) []cloud.Resource {
 	deletedResources := make([]cloud.Resource, 0)
 	deleted := 1
 	for deleted > 0 {
 		deleted = 0
 
 		for _, service := range services {
-			for _, region := range account.Regions {
+			for _, region := range regions {
 				foundResources, err := service.List(region, currentAccount)
 				if err != nil {
 					fmt.Println(err)
