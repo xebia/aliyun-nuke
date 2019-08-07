@@ -1,6 +1,8 @@
 package nuker
 
 import (
+	"fmt"
+
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/aliyun"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
@@ -8,9 +10,10 @@ import (
 
 // Nuke actually removes all resources in a loop. It will keep on going until no resources
 // were deleted any more.
-func Nuke(account account.Account) []cloud.Resource {
+func Nuke(currentAccount account.Account) []cloud.Resource {
 	services := []cloud.Service{
-		aliyun.OssService{},
+		//aliyun.OssService{},
+		aliyun.EcsService{},
 	}
 
 	deletedResources := make([]cloud.Resource, 0)
@@ -19,12 +22,16 @@ func Nuke(account account.Account) []cloud.Resource {
 		deleted = 0
 
 		for _, service := range services {
-			foundResources, _ := service.List(account)
-			for _, resource := range foundResources {
-				ok, _ := resource.Delete()
-				if ok {
-					deletedResources = append(deletedResources, resource)
-					deleted++
+			for _, region := range account.Regions {
+				foundResources, _ := service.List(region, currentAccount)
+				for _, resource := range foundResources {
+					err := resource.Delete()
+					if err != nil {
+						fmt.Println(err)
+					} else {
+						deletedResources = append(deletedResources, resource)
+						deleted++
+					}
 				}
 			}
 		}

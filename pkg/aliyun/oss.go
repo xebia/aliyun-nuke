@@ -28,9 +28,14 @@ type item struct {
 	Key      string
 }
 
+// String outputs name of the service
+func (s OssService) String() string {
+	return "OSS"
+}
+
 // List returns a list of all buckets in an account
-func (s OssService) List(account account.Account) ([]cloud.Resource, error) {
-	client, err := oss.New("oss.aliyuncs.com", account.AccessKeyID, account.AccessKeySecret)
+func (s OssService) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+	client, err := getOSSClient(account, "oss")
 
 	if err != nil {
 		return nil, err
@@ -62,30 +67,30 @@ func (r OssResource) String() string {
 }
 
 // Delete removes a bucket
-func (r OssResource) Delete() (bool, error) {
+func (r OssResource) Delete() error {
 	client, err := getOSSClient(r.Account, r.Location)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	clientBucket, err := client.Bucket(r.Name)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	for _, item := range r.items {
 		err = clientBucket.DeleteObject(item.Key)
 		if err != nil {
-			return false, nil
+			return nil
 		}
 	}
 
 	err = client.DeleteBucket(r.Name)
 	if err != nil {
-		return false, nil
+		return nil
 	}
 
-	return true, nil
+	return nil
 }
 
 func listItemsInBucket(account account.Account, r OssResource) ([]item, error) {

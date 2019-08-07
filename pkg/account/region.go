@@ -1,7 +1,7 @@
 package account
 
 // Regions contain all the region codes currently available
-var Regions = []string{
+var Regions = []Region{
 	"cn-qingdao",
 	"cn-beijing",
 	"cn-zhangjiakou",
