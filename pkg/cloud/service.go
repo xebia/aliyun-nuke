@@ -10,6 +10,6 @@ type Service interface {
 
 // Resource is the single unit to be deleted with a single service
 type Resource interface {
-	Delete() error
+	Delete(account.Region, account.Account) error
 	String() string
 }

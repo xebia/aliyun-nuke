@@ -1,4 +1,4 @@
-package aliyun
+package oss
 
 import (
 	"fmt"
@@ -9,12 +9,11 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-// OssService represents the OSS service
-type OssService struct{}
+// Buckets represents the OSS service
+type Buckets struct{}
 
-// OssResource wraps OSS buckets
-type OssResource struct {
-	Account  account.Account
+// Bucket wraps OSS buckets
+type Bucket struct {
 	Name     string
 	Location string
 
@@ -23,18 +22,16 @@ type OssResource struct {
 
 // Item is a single object in a bucket
 type item struct {
-	Account  account.Account
-	Location string
 	Key      string
 }
 
 // String outputs name of the service
-func (s OssService) String() string {
+func (s Buckets) String() string {
 	return "OSS"
 }
 
 // List returns a list of all buckets in an account
-func (s OssService) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (s Buckets) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := getOSSClient(account, "oss")
 
 	if err != nil {
@@ -48,7 +45,7 @@ func (s OssService) List(region account.Region, account account.Account) ([]clou
 
 	buckets := make([]cloud.Resource, len(bucketResult.Buckets))
 	for i, bucket := range bucketResult.Buckets {
-		b := OssResource{Name: bucket.Name, Location: bucket.Location, Account: account}
+		b := Bucket{Name: bucket.Name, Location: bucket.Location}
 		items, err := listItemsInBucket(account, b)
 		if err != nil {
 			return nil, err
@@ -62,13 +59,13 @@ func (s OssService) List(region account.Region, account account.Account) ([]clou
 }
 
 // String returns the name of the resource
-func (r OssResource) String() string {
+func (r Bucket) String() string {
 	return fmt.Sprintf("Bucket: %s (%d items deleted)", r.Name, len(r.items))
 }
 
 // Delete removes a bucket
-func (r OssResource) Delete() error {
-	client, err := getOSSClient(r.Account, r.Location)
+func (r Bucket) Delete(region account.Region, account account.Account) error {
+	client, err := getOSSClient(account, r.Location)
 	if err != nil {
 		return err
 	}
@@ -93,7 +90,7 @@ func (r OssResource) Delete() error {
 	return nil
 }
 
-func listItemsInBucket(account account.Account, r OssResource) ([]item, error) {
+func listItemsInBucket(account account.Account, r Bucket) ([]item, error) {
 	client, err := getOSSClient(account, r.Location)
 	if err != nil {
 		return nil, err
@@ -111,7 +108,7 @@ func listItemsInBucket(account account.Account, r OssResource) ([]item, error) {
 
 	items := make([]item, len(itemResult.Objects))
 	for i, object := range itemResult.Objects {
-		items[i] = item{Account: account, Location: r.Location, Key: object.Key}
+		items[i] = item{Key: object.Key}
 	}
 
 	return items, nil

@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	"github.com/xebia/aliyun-nuke/pkg/account"
-	"github.com/xebia/aliyun-nuke/pkg/aliyun"
+	"github.com/xebia/aliyun-nuke/pkg/aliyun/ecs"
+	"github.com/xebia/aliyun-nuke/pkg/aliyun/oss"
+	"github.com/xebia/aliyun-nuke/pkg/aliyun/vpc"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
@@ -12,8 +14,11 @@ import (
 // were deleted any more.
 func Nuke(currentAccount account.Account) []cloud.Resource {
 	services := []cloud.Service{
-		//aliyun.OssService{},
-		aliyun.EcsService{},
+		oss.Buckets{},
+		ecs.Instances{},
+		ecs.SecurityGroups{},
+		vpc.Vpcs{},
+		vpc.VSwitches{},
 	}
 
 	deletedResources := make([]cloud.Resource, 0)
@@ -23,14 +28,18 @@ func Nuke(currentAccount account.Account) []cloud.Resource {
 
 		for _, service := range services {
 			for _, region := range account.Regions {
-				foundResources, _ := service.List(region, currentAccount)
-				for _, resource := range foundResources {
-					err := resource.Delete()
-					if err != nil {
-						fmt.Println(err)
-					} else {
-						deletedResources = append(deletedResources, resource)
-						deleted++
+				foundResources, err := service.List(region, currentAccount)
+				if err != nil {
+					fmt.Println(err)
+				} else {
+					for _, resource := range foundResources {
+						err := resource.Delete(region, currentAccount)
+						if err != nil {
+							fmt.Println(err)
+						} else {
+							deletedResources = append(deletedResources, resource)
+							deleted++
+						}
 					}
 				}
 			}
