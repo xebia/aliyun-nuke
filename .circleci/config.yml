@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - run: go get -v -d
+      - run: go test -v ./...
+  build:
+    docker:
+      - image: circleci/golang:1.12
+    steps:
+      - checkout
+      - run: go get github.com/mitchellh/gox
+      - run: go get -v -d
+      - run: gox -output="bin/{{.OS}}-{{.Arch}}/{{.Dir}}" -os="linux windows darwin" -arch="amd64" -parallel=1
+      - persist_to_workspace:
+          root: .
+          paths: bin/
+      - store_artifacts:
+          path: ./bin
+workflows:
+  version: 2
+  main:
+    jobs:
+      - test
+      - build:
+          requires: 
+            - test
