@@ -14,7 +14,7 @@ jobs:
       - checkout
       - run: go get github.com/mitchellh/gox
       - run: go get -v -d
-      - run: gox -output="bin/{{.OS}}-{{.Arch}}/{{.Dir}}" -os="linux windows darwin" -arch="amd64" -parallel=1
+      - run: gox -output="bin/{{.OS}}-{{.Arch}}/{{.Dir}}" -os="linux windows darwin" -arch="amd64" -parallel=3
       - persist_to_workspace:
           root: .
           paths: bin/
