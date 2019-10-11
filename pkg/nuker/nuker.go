@@ -43,9 +43,9 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 			} else {
 				deletedPerRegion := make(chan []cloud.Resource)
 				var wg sync.WaitGroup
-				wg.Add(len(regions))
 
 				for _, region := range regions {
+					wg.Add(1)
 					go func(region account.Region) {
 						defer wg.Done()
 						deleted, _ := deleteResourcesForServiceInRegion(service, region, currentAccount)
@@ -54,13 +54,14 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 				}
 
 				go func() {
-					for deleted := range deletedPerRegion {
-						deletedResources = append(deletedResources, deleted...)
-						deletedCount += len(deleted)
-					}
+					wg.Wait()
+					close(deletedPerRegion)
 				}()
 
-				wg.Wait()
+				for deleted := range deletedPerRegion {
+					deletedResources = append(deletedResources, deleted...)
+					deletedCount += len(deleted)
+				}
 			}
 		}
 
