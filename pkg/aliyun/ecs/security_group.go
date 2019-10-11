@@ -13,11 +13,6 @@ type SecurityGroup struct {
 	ecs.SecurityGroup
 }
 
-// String outputs name of the service
-func (s SecurityGroups) String() string {
-	return "ECS security group"
-}
-
 // List returns a list of all machines
 func (s SecurityGroups) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)

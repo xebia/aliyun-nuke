@@ -13,11 +13,6 @@ type Instance struct {
 	ecs.Instance
 }
 
-// String outputs name of the service
-func (s Instances) String() string {
-	return "ECS instance"
-}
-
 // List returns a list of all machines
 func (s Instances) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)

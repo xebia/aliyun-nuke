@@ -25,11 +25,6 @@ type item struct {
 	Key      string
 }
 
-// String outputs name of the service
-func (s Buckets) String() string {
-	return "OSS"
-}
-
 // List returns a list of all buckets in an account
 func (s Buckets) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := getOSSClient(account, "oss")
@@ -60,7 +55,7 @@ func (s Buckets) List(region account.Region, account account.Account) ([]cloud.R
 
 // String returns the name of the resource
 func (r Bucket) String() string {
-	return fmt.Sprintf("Bucket: %s (%d items deleted)", r.Name, len(r.items))
+	return fmt.Sprintf("%s (%d items)", r.Name, len(r.items))
 }
 
 // Delete removes a bucket

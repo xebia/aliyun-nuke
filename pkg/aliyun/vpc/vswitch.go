@@ -13,11 +13,6 @@ type VSwitch struct {
 	vpc.VSwitch
 }
 
-// String outputs name of the service
-func (v VSwitches) String() string {
-	return "ECS instance"
-}
-
 // List returns a list of all machines
 func (v VSwitches) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)

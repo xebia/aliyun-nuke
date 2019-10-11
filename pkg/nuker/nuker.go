@@ -26,9 +26,9 @@ func NukeItAll(currentAccount account.Account) []cloud.Resource {
 // It will keep on going until no resources were deleted any more.
 func Nuke(currentAccount account.Account, services []cloud.Service, regions []account.Region) []cloud.Resource {
 	deletedResources := make([]cloud.Resource, 0)
-	deleted := 1
-	for deleted > 0 {
-		deleted = 0
+
+	for {
+		deleted := 0
 
 		for _, service := range services {
 			for _, region := range regions {
@@ -48,6 +48,11 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 				}
 			}
 		}
+
+		if deleted == 0 {
+			break
+		}
 	}
+
 	return deletedResources
 }
