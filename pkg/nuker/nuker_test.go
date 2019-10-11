@@ -51,15 +51,11 @@ func TestNuke(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, _ := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions); !reflect.DeepEqual(got, tt.want) {
+			if got := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Nuke() = %v, want %v", got, tt.want)
 			}
 		})
 	}
-}
-
-func (d dummyService) IsGlobal() bool {
-	return false
 }
 
 func (d dummyService) List(account.Region, account.Account) ([]cloud.Resource, error) {
