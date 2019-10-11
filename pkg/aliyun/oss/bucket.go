@@ -9,10 +9,8 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-// Buckets represents the OSS service
 type Buckets struct{}
 
-// Bucket wraps OSS buckets
 type Bucket struct {
 	Name     string
 	Location string
@@ -20,12 +18,14 @@ type Bucket struct {
 	items []item
 }
 
-// Item is a single object in a bucket
 type item struct {
-	Key      string
+	Key string
 }
 
-// List returns a list of all buckets in an account
+func (s Buckets) IsGlobal() bool {
+	return true
+}
+
 func (s Buckets) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := getOSSClient(account, "oss")
 
@@ -53,12 +53,10 @@ func (s Buckets) List(region account.Region, account account.Account) ([]cloud.R
 	return buckets, nil
 }
 
-// String returns the name of the resource
 func (r Bucket) String() string {
 	return fmt.Sprintf("%s (%d items)", r.Name, len(r.items))
 }
 
-// Delete removes a bucket
 func (r Bucket) Delete(region account.Region, account account.Account) error {
 	client, err := getOSSClient(account, r.Location)
 	if err != nil {

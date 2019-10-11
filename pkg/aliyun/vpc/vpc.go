@@ -7,10 +7,14 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Vpcs struct {}
+type Vpcs struct{}
 
 type Vpc struct {
 	vpc.Vpc
+}
+
+func (v Vpcs) IsGlobal() bool {
+	return false
 }
 
 // List returns a list of all machines

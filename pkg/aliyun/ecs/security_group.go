@@ -13,7 +13,10 @@ type SecurityGroup struct {
 	ecs.SecurityGroup
 }
 
-// List returns a list of all machines
+func (s SecurityGroups) IsGlobal() bool {
+	return false
+}
+
 func (s SecurityGroups) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {

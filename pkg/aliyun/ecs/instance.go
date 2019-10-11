@@ -13,8 +13,11 @@ type Instance struct {
 	ecs.Instance
 }
 
-// List returns a list of all machines
-func (s Instances) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (i Instances) IsGlobal() bool {
+	return false
+}
+
+func (i Instances) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -35,18 +38,18 @@ func (s Instances) List(region account.Region, account account.Account) ([]cloud
 	return instances, nil
 }
 
-func (e Instance) String() string {
-	return e.InstanceId
+func (i Instance) String() string {
+	return i.InstanceId
 }
 
-func (e Instance) Delete(region account.Region, account account.Account) error {
+func (i Instance) Delete(region account.Region, account account.Account) error {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err
 	}
 
 	request := ecs.CreateDeleteInstanceRequest()
-	request.InstanceId = e.InstanceId
+	request.InstanceId = i.InstanceId
 	request.Force = "true"
 	request.TerminateSubscription = "true"
 

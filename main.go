@@ -23,8 +23,12 @@ func main() {
 		},
 	}
 
-	deleted := nuker.NukeItAll(currentAccount)
+	deleted, err := nuker.NukeItAll(currentAccount)
 	for _, resource := range deleted {
 		log.Println(resource)
+	}
+
+	if err != nil {
+		log.Fatal(err)
 	}
 }
