@@ -1,8 +1,6 @@
 package nuker
 
 import (
-	"sync"
-
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/aliyun/ecs"
 	"github.com/xebia/aliyun-nuke/pkg/aliyun/oss"
@@ -41,26 +39,11 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 				deletedResources = append(deletedResources, deleted...)
 				deletedCount += len(deleted)
 			} else {
-				deletedPerRegion := make(chan []cloud.Resource)
-				var wg sync.WaitGroup
-				wg.Add(len(regions))
-
 				for _, region := range regions {
-					go func(region account.Region) {
-						defer wg.Done()
-						deleted, _ := deleteResourcesForServiceInRegion(service, region, currentAccount)
-						deletedPerRegion <- deleted
-					}(region)
+					deleted, _ := deleteResourcesForServiceInRegion(service, region, currentAccount)
+					deletedResources = append(deletedResources, deleted...)
+					deletedCount += len(deleted)
 				}
-
-				go func() {
-					for deleted := range deletedPerRegion {
-						deletedResources = append(deletedResources, deleted...)
-						deletedCount += len(deleted)
-					}
-				}()
-
-				wg.Wait()
 			}
 		}
 
