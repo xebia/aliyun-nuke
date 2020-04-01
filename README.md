@@ -10,12 +10,12 @@ Because Alibaba Cloud has many regions and every region can contain different re
 
 Currently supported services are:
 
-| Service | Elements                       |
-| ------- | ------------------------------ |
-| ECS     | Instances, security groups     |
-| OSS     | Buckets, objects               |
-| VPC     | VPCs, VSwitches, NAT gateways  |
-| RAM     | Users, groups, roles, policies |
+| Service | Elements                             |
+| ------- | ------------------------------------ |
+| ECS     | Instances, security groups           |
+| OSS     | Buckets, objects                     |
+| VPC     | VPCs, VSwitches, NAT gateways, EIPs  |
+| RAM     | Users, groups, roles, policies       |
 
 Any other resources will be kept as-is. If any unsupported resources block the deletion of the above resource types, aliyun-nuke will stop the deletion process and quit.
 
