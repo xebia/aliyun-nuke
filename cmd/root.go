@@ -9,7 +9,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "aliyun-nuke",
 	Short:   "aliyun-nuke removes all resources in your Alibaba Cloud account",
-	Version: "0.0.1",
+	Version: "0.1.3",
 }
 
 func Execute() {
