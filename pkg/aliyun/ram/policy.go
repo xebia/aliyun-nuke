@@ -41,8 +41,12 @@ func (p Policies) List(region account.Region, account account.Account) ([]cloud.
 	return policies, nil
 }
 
-func (p Policy) String() string {
+func (p Policy) Id() string {
 	return p.PolicyName
+}
+
+func (p Policy) Type() string {
+	return "RAM policy"
 }
 
 func (p Policy) Delete(region account.Region, account account.Account) error {

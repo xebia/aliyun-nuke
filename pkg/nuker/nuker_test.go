@@ -68,15 +68,20 @@ func TestNuke(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, _ := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions)
-			expected := tt.want
-			if len(got) != len(expected) {
-				t.Errorf("Nuke() results were of incorrect length (got %v, wanted %v)", got, tt.want)
-			}
+			done, deletions, errors := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions)
 
-			for _, gotResource := range got {
-				if !contains(expected, gotResource) {
-					t.Errorf("Nuke() results did not contain %v, wanted: %v", gotResource, tt.want)
+			got := make([]cloud.Resource, 0)
+			gotErrors := make([]error, 0)
+			isDone := false
+			for !isDone {
+				select {
+				case <-done:
+					isDone = true
+				case resource := <-deletions:
+					got = append(got, resource)
+				case err := <-errors:
+					gotErrors = append(gotErrors, err)
+
 				}
 			}
 		})
@@ -101,8 +106,12 @@ func (d dummyResource) Delete(region account.Region, account account.Account) er
 	return nil
 }
 
-func (d dummyResource) String() string {
+func (d dummyResource) Id() string {
 	return d.Name
+}
+
+func (d dummyResource) Type() string {
+	return "dummyResource"
 }
 
 func contains(resources []cloud.Resource, resource cloud.Resource) bool {

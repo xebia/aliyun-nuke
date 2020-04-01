@@ -17,7 +17,6 @@ func (v Vpcs) IsGlobal() bool {
 	return false
 }
 
-// List returns a list of all machines
 func (v Vpcs) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
@@ -39,8 +38,12 @@ func (v Vpcs) List(region account.Region, account account.Account) ([]cloud.Reso
 	return vpcs, nil
 }
 
-func (v Vpc) String() string {
+func (v Vpc) Id() string {
 	return v.VpcId
+}
+
+func (v Vpc) Type() string {
+	return "VPC"
 }
 
 func (v Vpc) Delete(region account.Region, account account.Account) error {

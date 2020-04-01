@@ -48,8 +48,12 @@ func (r Roles) List(region account.Region, account account.Account) ([]cloud.Res
 	return roles, nil
 }
 
-func (r Role) String() string {
+func (r Role) Id() string {
 	return r.RoleName
+}
+
+func (r Role) Type() string {
+	return "RAM role"
 }
 
 func (r Role) Delete(region account.Region, account account.Account) error {

@@ -14,14 +14,14 @@ Currently supported services are:
 | ------- | ------------------------------ |
 | ECS     | Instances, security groups     |
 | OSS     | Buckets, objects               |
-| VPC     | VPCs, VSwitches                |
+| VPC     | VPCs, VSwitches, NAT gateways  |
 | RAM     | Users, groups, roles, policies |
 
 Any other resources will be kept as-is. If any unsupported resources block the deletion of the above resource types, aliyun-nuke will stop the deletion process and quit.
 
 ## Getting started as CLI tool
 
-Build aliyun-cli from the source code by running `go build ./` in the root directory of the repository. This assumes your Go environment is set up correctly.
+Build aliyun-cli from the source code by running `go build .` in the root directory of the repository. This assumes your Go environment is set up correctly.
 
 When you have built an executable, define the following environment variables:
 
@@ -43,6 +43,8 @@ Then run aliyun-nuke to clear the account:
 aliyun-nuke can also be used as a library:
 
 ```go
+package main
+
 import (
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/nuker"
@@ -56,7 +58,7 @@ func main() {
 		},
 	}
 
-	deleted := nuker.NukeItAll(currentAccount)
+	done, _, _ := nuker.NukeItAll(currentAccount)
+    <-done
 }
-
 ```

@@ -62,8 +62,12 @@ func (u Users) List(region account.Region, account account.Account) ([]cloud.Res
 	return users, nil
 }
 
-func (u User) String() string {
+func (u User) Id() string {
 	return u.UserName
+}
+
+func (u User) Type() string {
+	return "RAM user"
 }
 
 func (u User) Delete(region account.Region, account account.Account) error {

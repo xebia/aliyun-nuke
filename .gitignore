@@ -21,3 +21,6 @@ init/
 # Aliyun
 .ossutil_checkpoint
 aliyun-nuke
+
+# Local testing
+tests/integration

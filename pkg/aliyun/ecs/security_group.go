@@ -38,8 +38,12 @@ func (s SecurityGroups) List(region account.Region, account account.Account) ([]
 	return groups, nil
 }
 
-func (s SecurityGroup) String() string {
+func (s SecurityGroup) Id() string {
 	return s.SecurityGroupId
+}
+
+func (s SecurityGroup) Type() string {
+	return "Security group"
 }
 
 func (s SecurityGroup) Delete(region account.Region, account account.Account) error {

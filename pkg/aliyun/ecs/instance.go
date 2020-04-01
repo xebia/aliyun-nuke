@@ -38,8 +38,12 @@ func (i Instances) List(region account.Region, account account.Account) ([]cloud
 	return instances, nil
 }
 
-func (i Instance) String() string {
+func (i Instance) Id() string {
 	return i.InstanceId
+}
+
+func (i Instance) Type() string {
+	return "ECS instance"
 }
 
 func (i Instance) Delete(region account.Region, account account.Account) error {

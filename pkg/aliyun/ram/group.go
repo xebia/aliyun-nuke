@@ -48,8 +48,12 @@ func (g Groups) List(region account.Region, account account.Account) ([]cloud.Re
 	return groups, nil
 }
 
-func (g Group) String() string {
+func (g Group) Id() string {
 	return g.GroupName
+}
+
+func (g Group) Type() string {
+	return "RAM group"
 }
 
 func (g Group) Delete(region account.Region, account account.Account) error {

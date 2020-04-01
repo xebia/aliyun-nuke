@@ -53,8 +53,12 @@ func (s Buckets) List(region account.Region, account account.Account) ([]cloud.R
 	return buckets, nil
 }
 
-func (r Bucket) String() string {
+func (r Bucket) Id() string {
 	return fmt.Sprintf("%s (%d items)", r.Name, len(r.items))
+}
+
+func (r Bucket) Type() string {
+	return "OSS bucket"
 }
 
 func (r Bucket) Delete(region account.Region, account account.Account) error {
