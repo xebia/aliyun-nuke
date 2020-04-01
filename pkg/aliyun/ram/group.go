@@ -10,9 +10,9 @@ import (
 type Groups struct{}
 
 type Group struct {
-	ram.Group
+	ram.GroupInListGroups
 
-	Policies []ram.Policy
+	Policies []ram.PolicyInListPoliciesForGroup
 }
 
 func (g Groups) IsGlobal() bool {
@@ -40,8 +40,8 @@ func (g Groups) List(region account.Region, account account.Account) ([]cloud.Re
 		}
 
 		groups = append(groups, Group{
-			Group:    group,
-			Policies: policies,
+			GroupInListGroups: group,
+			Policies:          policies,
 		})
 	}
 
@@ -88,7 +88,7 @@ func (g Group) Delete(region account.Region, account account.Account) error {
 	return nil
 }
 
-func fetchPoliciesForGroup(client *ram.Client, groupName string) ([]ram.Policy, error) {
+func fetchPoliciesForGroup(client *ram.Client, groupName string) ([]ram.PolicyInListPoliciesForGroup, error) {
 	request := ram.CreateListPoliciesForGroupRequest()
 	request.Scheme = "https"
 	request.GroupName = groupName

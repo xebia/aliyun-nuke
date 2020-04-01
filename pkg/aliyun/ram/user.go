@@ -10,11 +10,11 @@ import (
 type Users struct{}
 
 type User struct {
-	ram.User
+	ram.UserInListUsers
 
 	AccessKeys []account.Credentials
-	Policies   []ram.Policy
-	Groups     []ram.Group
+	Policies   []ram.PolicyInListPoliciesForUser
+	Groups     []ram.GroupInListGroupsForUser
 }
 
 func (u Users) IsGlobal() bool {
@@ -52,10 +52,10 @@ func (u Users) List(region account.Region, account account.Account) ([]cloud.Res
 		}
 
 		users = append(users, User{
-			User:       user,
-			AccessKeys: accessKeys,
-			Policies:   policies,
-			Groups:     groups,
+			UserInListUsers: user,
+			AccessKeys:      accessKeys,
+			Policies:        policies,
+			Groups:          groups,
 		})
 	}
 
@@ -138,14 +138,13 @@ func fetchAccessKeysForUser(client *ram.Client, username string) ([]account.Cred
 	accessKeys := make([]account.Credentials, 0)
 	for _, accessKey := range response.AccessKeys.AccessKey {
 		accessKeys = append(accessKeys, account.Credentials{
-			AccessKeyID:     accessKey.AccessKeyId,
-			AccessKeySecret: accessKey.AccessKeySecret,
+			AccessKeyID: accessKey.AccessKeyId,
 		})
 	}
 	return accessKeys, nil
 }
 
-func fetchPoliciesForUser(client *ram.Client, username string) ([]ram.Policy, error) {
+func fetchPoliciesForUser(client *ram.Client, username string) ([]ram.PolicyInListPoliciesForUser, error) {
 	request := ram.CreateListPoliciesForUserRequest()
 	request.Scheme = "https"
 	request.UserName = username
@@ -157,7 +156,7 @@ func fetchPoliciesForUser(client *ram.Client, username string) ([]ram.Policy, er
 	return response.Policies.Policy, nil
 }
 
-func fetchGroupsForUser(client *ram.Client, username string) ([]ram.Group, error) {
+func fetchGroupsForUser(client *ram.Client, username string) ([]ram.GroupInListGroupsForUser, error) {
 	request := ram.CreateListGroupsForUserRequest()
 	request.Scheme = "https"
 	request.UserName = username

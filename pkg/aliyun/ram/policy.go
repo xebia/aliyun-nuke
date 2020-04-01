@@ -10,7 +10,7 @@ import (
 type Policies struct{}
 
 type Policy struct {
-	ram.Policy
+	ram.PolicyInListPolicies
 }
 
 func (p Policies) IsGlobal() bool {
@@ -34,7 +34,7 @@ func (p Policies) List(region account.Region, account account.Account) ([]cloud.
 	policies := make([]cloud.Resource, 0)
 	for _, policy := range response.Policies.Policy {
 		policies = append(policies, Policy{
-			Policy: policy,
+			PolicyInListPolicies: policy,
 		})
 	}
 

@@ -3,19 +3,17 @@ module github.com/xebia/aliyun-nuke
 go 1.13
 
 require (
-	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20190807025415-f7b53401d4e7
-	github.com/aliyun/aliyun-oss-go-sdk v2.0.1+incompatible
-	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/mitchellh/mapstructure v1.2.2 // indirect
-	github.com/pelletier/go-toml v1.6.0 // indirect
-	github.com/spf13/afero v1.2.2 // indirect
-	github.com/spf13/cast v1.3.1 // indirect
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.84
+	github.com/aliyun/aliyun-oss-go-sdk v2.0.7+incompatible
+	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
+	github.com/jmespath/go-jmespath v0.3.0 // indirect
+	github.com/json-iterator/go v1.1.9 // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/satori/go.uuid v1.2.0 // indirect
+	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/spf13/cobra v0.0.7
-	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.6.2 // indirect
-	golang.org/x/sys v0.0.0-20200331124033-c3d80250170d // indirect
-	golang.org/x/text v0.3.2 // indirect
+	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	gopkg.in/ini.v1 v1.55.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

@@ -10,9 +10,9 @@ import (
 type Roles struct{}
 
 type Role struct {
-	ram.Role
+	ram.RoleInListRoles
 
-	Policies []ram.Policy
+	Policies []ram.PolicyInListPoliciesForRole
 }
 
 func (r Roles) IsGlobal() bool {
@@ -40,8 +40,8 @@ func (r Roles) List(region account.Region, account account.Account) ([]cloud.Res
 		}
 
 		roles = append(roles, Role{
-			Role:     role,
-			Policies: policies,
+			RoleInListRoles: role,
+			Policies:        policies,
 		})
 	}
 
@@ -88,7 +88,7 @@ func (r Role) Delete(region account.Region, account account.Account) error {
 	return nil
 }
 
-func fetchPoliciesForRole(client *ram.Client, roleName string) ([]ram.Policy, error) {
+func fetchPoliciesForRole(client *ram.Client, roleName string) ([]ram.PolicyInListPoliciesForRole, error) {
 	request := ram.CreateListPoliciesForRoleRequest()
 	request.Scheme = "https"
 	request.RoleName = roleName

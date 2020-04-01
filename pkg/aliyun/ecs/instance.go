@@ -10,7 +10,7 @@ import (
 type Instances struct{}
 
 type Instance struct {
-	ecs.Instance
+	ecs.InstanceInDescribeInstances
 }
 
 func (i Instances) IsGlobal() bool {
@@ -32,7 +32,7 @@ func (i Instances) List(region account.Region, account account.Account) ([]cloud
 
 	instances := make([]cloud.Resource, 0)
 	for _, instance := range response.Instances.Instance {
-		instances = append(instances, Instance{Instance: instance})
+		instances = append(instances, Instance{InstanceInDescribeInstances: instance})
 	}
 
 	return instances, nil
