@@ -13,7 +13,12 @@ import (
 var regions []string
 
 func init() {
-	destroyCmd.Flags().StringSliceVarP(&regions, "regions", "r", account.Regions, "Specify list of regions to destroy resources in")
+	defaultRegions := make([]string, len(account.AllRegions))
+	for _, region := range account.AllRegions {
+		defaultRegions = append(defaultRegions, string(region))
+	}
+
+	destroyCmd.Flags().StringSliceVarP(&regions, "regions", "r", defaultRegions, "Specify list of regions to destroy resources in")
 	rootCmd.AddCommand(destroyCmd)
 }
 

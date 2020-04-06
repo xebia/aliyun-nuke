@@ -58,7 +58,9 @@ func main() {
 		},
 	}
 
-	done, _, _ := nuker.NukeItAll(currentAccount)
-    <-done
+	results := nuker.NukeItAll(currentAccount, account.AllRegions)
+    for range results {
+        // process results (always consume this channel!)	
+    }
 }
 ```
