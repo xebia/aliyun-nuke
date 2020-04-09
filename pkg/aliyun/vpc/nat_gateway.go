@@ -16,6 +16,10 @@ type NatGateway struct {
 	SnatTables map[string][]vpc.SnatTableEntry
 }
 
+func init() {
+	cloud.RegisterService(NatGateways{})
+}
+
 func (n NatGateways) IsGlobal() bool {
 	return false
 }

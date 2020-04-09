@@ -15,6 +15,10 @@ type Group struct {
 	Policies []ram.PolicyInListPoliciesForGroup
 }
 
+func init() {
+	cloud.RegisterService(Groups{})
+}
+
 func (g Groups) IsGlobal() bool {
 	return true
 }

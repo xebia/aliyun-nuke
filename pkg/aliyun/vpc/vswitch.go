@@ -13,6 +13,10 @@ type VSwitch struct {
 	vpc.VSwitch
 }
 
+func init() {
+	cloud.RegisterService(VSwitches{})
+}
+
 func (v VSwitches) IsGlobal() bool {
 	return false
 }

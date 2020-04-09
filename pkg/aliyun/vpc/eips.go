@@ -13,6 +13,10 @@ type Eip struct {
 	vpc.EipAddress
 }
 
+func init() {
+	cloud.RegisterService(Eips{})
+}
+
 func (e Eips) IsGlobal() bool {
 	return false
 }

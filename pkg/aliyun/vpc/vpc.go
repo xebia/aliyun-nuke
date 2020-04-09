@@ -13,6 +13,10 @@ type Vpc struct {
 	vpc.Vpc
 }
 
+func init() {
+	cloud.RegisterService(Vpcs{})
+}
+
 func (v Vpcs) IsGlobal() bool {
 	return false
 }

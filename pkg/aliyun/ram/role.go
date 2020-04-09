@@ -15,6 +15,10 @@ type Role struct {
 	Policies []ram.PolicyInListPoliciesForRole
 }
 
+func init() {
+	cloud.RegisterService(Roles{})
+}
+
 func (r Roles) IsGlobal() bool {
 	return true
 }

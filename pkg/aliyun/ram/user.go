@@ -17,6 +17,10 @@ type User struct {
 	Groups     []ram.GroupInListGroupsForUser
 }
 
+func init() {
+	cloud.RegisterService(Users{})
+}
+
 func (u Users) IsGlobal() bool {
 	return true
 }

@@ -14,3 +14,10 @@ type Resource interface {
 	Id() string
 	Type() string
 }
+
+var Services = make([]Service, 0)
+
+// RegisterService is called by init() functions of cloud services to register themselves
+func RegisterService(service Service) {
+	Services = append(Services, service)
+}

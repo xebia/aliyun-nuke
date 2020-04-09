@@ -2,6 +2,7 @@ package ecs
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
+	"github.com/xebia/aliyun-nuke/pkg/nuker"
 
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
@@ -11,6 +12,10 @@ type SecurityGroups struct{}
 
 type SecurityGroup struct {
 	ecs.SecurityGroup
+}
+
+func init() {
+	cloud.RegisterService(SecurityGroups{})
 }
 
 func (s SecurityGroups) IsGlobal() bool {

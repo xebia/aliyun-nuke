@@ -2,7 +2,6 @@ package oss
 
 import (
 	"fmt"
-
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 
 	"github.com/xebia/aliyun-nuke/pkg/account"
@@ -20,6 +19,10 @@ type Bucket struct {
 
 type item struct {
 	Key string
+}
+
+func init() {
+	cloud.RegisterService(Buckets{})
 }
 
 func (s Buckets) IsGlobal() bool {

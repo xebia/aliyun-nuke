@@ -2,10 +2,6 @@ package nuker
 
 import (
 	"github.com/xebia/aliyun-nuke/pkg/account"
-	"github.com/xebia/aliyun-nuke/pkg/aliyun/ecs"
-	"github.com/xebia/aliyun-nuke/pkg/aliyun/oss"
-	"github.com/xebia/aliyun-nuke/pkg/aliyun/ram"
-	"github.com/xebia/aliyun-nuke/pkg/aliyun/vpc"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
@@ -17,20 +13,7 @@ type NukeResult struct {
 
 // NukeItAll will nuke (delete) all Alibaba Cloud services in the specified regions
 func NukeItAll(currentAccount account.Account, regions []account.Region) <-chan NukeResult {
-	services := []cloud.Service{
-		oss.Buckets{},
-		ecs.Instances{},
-		ecs.SecurityGroups{},
-		ram.Groups{},
-		ram.Policies{},
-		ram.Roles{},
-		ram.Users{},
-		vpc.Eips{},
-		vpc.NatGateways{},
-		vpc.Vpcs{},
-		vpc.VSwitches{},
-	}
-	return Nuke(currentAccount, services, regions)
+	return Nuke(currentAccount, cloud.Services, regions)
 }
 
 // Nuke removes all resources of specified services in specified regions in a loop.

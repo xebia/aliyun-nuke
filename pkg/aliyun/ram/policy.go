@@ -13,6 +13,10 @@ type Policy struct {
 	ram.PolicyInListPolicies
 }
 
+func init() {
+	cloud.RegisterService(Policies{})
+}
+
 func (p Policies) IsGlobal() bool {
 	return true
 }

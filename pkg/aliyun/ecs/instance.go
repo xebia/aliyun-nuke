@@ -2,7 +2,6 @@ package ecs
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
-
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
@@ -11,6 +10,10 @@ type Instances struct{}
 
 type Instance struct {
 	ecs.InstanceInDescribeInstances
+}
+
+func init() {
+	cloud.RegisterService(Instances{})
 }
 
 func (i Instances) IsGlobal() bool {
