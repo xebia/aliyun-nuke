@@ -49,7 +49,7 @@ var destroyCmd = &cobra.Command{
 		results := nuker.NukeItAll(currentAccount, regionsToDestroy)
 		for result := range results {
 			if result.Success {
-				log.Println(fmt.Sprintf("%s - %s", result.Resource.Type(), result.Resource.Id()))
+				log.Println(fmt.Sprintf("Nuked: %s - %s", result.Resource.Type(), result.Resource.Id()))
 			} else {
 				log.Println(fmt.Sprintf("Error occurred: %s", result.Error))
 			}
