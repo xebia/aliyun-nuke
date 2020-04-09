@@ -1,6 +1,8 @@
 package cloud
 
-import "github.com/xebia/aliyun-nuke/pkg/account"
+import (
+	"github.com/xebia/aliyun-nuke/pkg/account"
+)
 
 // Service is a single service in a cloud provider
 type Service interface {

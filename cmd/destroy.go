@@ -13,7 +13,7 @@ import (
 var regions []string
 
 func init() {
-	defaultRegions := make([]string, len(account.AllRegions))
+	defaultRegions := make([]string, 0)
 	for _, region := range account.AllRegions {
 		defaultRegions = append(defaultRegions, string(region))
 	}
@@ -45,6 +45,7 @@ var destroyCmd = &cobra.Command{
 			regionsToDestroy = append(regionsToDestroy, account.Region(region))
 		}
 
+		log.Println(fmt.Sprintf("Starting destruction in regions: %s", regionsToDestroy))
 		results := nuker.NukeItAll(currentAccount, regionsToDestroy)
 		for result := range results {
 			if result.Success {
@@ -53,6 +54,6 @@ var destroyCmd = &cobra.Command{
 				log.Println(fmt.Sprintf("Error occurred: %s", result.Error))
 			}
 		}
-		log.Println("All done!")
+		log.Println("Account has converged")
 	},
 }

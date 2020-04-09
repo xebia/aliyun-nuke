@@ -1,4 +1,4 @@
-package vpc
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
@@ -8,24 +8,24 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type NatGateways struct{}
+type VpcNatGateways struct{}
 
-type NatGateway struct {
+type VpcNatGateway struct {
 	vpc.NatGateway
 
 	SnatTables map[string][]vpc.SnatTableEntry
 }
 
 func init() {
-	cloud.RegisterService(NatGateways{})
+	cloud.RegisterService(VpcNatGateways{})
 }
 
-func (n NatGateways) IsGlobal() bool {
+func (n VpcNatGateways) IsGlobal() bool {
 	return false
 }
 
 // List returns a list of all NAT gateways
-func (n NatGateways) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (n VpcNatGateways) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -44,21 +44,21 @@ func (n NatGateways) List(region account.Region, account account.Account) ([]clo
 		if err != nil {
 			return nil, err
 		}
-		natGateways = append(natGateways, NatGateway{NatGateway: natGatewayItem, SnatTables: snatTables})
+		natGateways = append(natGateways, VpcNatGateway{NatGateway: natGatewayItem, SnatTables: snatTables})
 	}
 
 	return natGateways, nil
 }
 
-func (n NatGateway) Id() string {
+func (n VpcNatGateway) Id() string {
 	return n.NatGatewayId
 }
 
-func (n NatGateway) Type() string {
+func (n VpcNatGateway) Type() string {
 	return "NAT gateway"
 }
 
-func (n NatGateway) Delete(region account.Region, account account.Account) error {
+func (n VpcNatGateway) Delete(region account.Region, account account.Account) error {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err
@@ -86,7 +86,7 @@ func fetchSnatTables(client *vpc.Client, ids vpc.SnatTableIdsInDescribeNatGatewa
 	return snatTables, nil
 }
 
-func deleteNatGatewayAndAwait(client *vpc.Client, n NatGateway) error {
+func deleteNatGatewayAndAwait(client *vpc.Client, n VpcNatGateway) error {
 	deleteRequest := vpc.CreateDeleteNatGatewayRequest()
 	deleteRequest.NatGatewayId = n.NatGatewayId
 	deleteRequest.Force = "true"

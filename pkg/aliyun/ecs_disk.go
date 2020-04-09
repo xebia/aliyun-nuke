@@ -1,4 +1,4 @@
-package ecs
+package aliyun
 
 import (
 	"fmt"
@@ -7,23 +7,23 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Disks struct{}
+type EcsDisks struct{}
 
-type Disk struct {
+type EcsDisk struct {
 	ecs.DiskInDescribeDisks
 
 	DiskType string
 }
 
 func init() {
-	cloud.RegisterService(Disks{})
+	cloud.RegisterService(EcsDisks{})
 }
 
-func (d Disks) IsGlobal() bool {
+func (d EcsDisks) IsGlobal() bool {
 	return false
 }
 
-func (d Disks) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (d EcsDisks) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -38,21 +38,21 @@ func (d Disks) List(region account.Region, account account.Account) ([]cloud.Res
 
 	disks := make([]cloud.Resource, 0)
 	for _, disk := range response.Disks.Disk {
-		disks = append(disks, Disk{DiskInDescribeDisks: disk, DiskType: disk.Type})
+		disks = append(disks, EcsDisk{DiskInDescribeDisks: disk, DiskType: disk.Type})
 	}
 
 	return disks, nil
 }
 
-func (d Disk) Id() string {
+func (d EcsDisk) Id() string {
 	return d.DiskId
 }
 
-func (d Disk) Type() string {
+func (d EcsDisk) Type() string {
 	return fmt.Sprintf("Block storage %s disk", d.DiskType)
 }
 
-func (d Disk) Delete(region account.Region, account account.Account) error {
+func (d EcsDisk) Delete(region account.Region, account account.Account) error {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

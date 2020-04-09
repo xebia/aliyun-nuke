@@ -1,4 +1,4 @@
-package ram
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
@@ -7,23 +7,23 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Roles struct{}
+type RamRoles struct{}
 
-type Role struct {
+type RamRole struct {
 	ram.RoleInListRoles
 
 	Policies []ram.PolicyInListPoliciesForRole
 }
 
 func init() {
-	cloud.RegisterService(Roles{})
+	cloud.RegisterService(RamRoles{})
 }
 
-func (r Roles) IsGlobal() bool {
+func (r RamRoles) IsGlobal() bool {
 	return true
 }
 
-func (r Roles) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (r RamRoles) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (r Roles) List(region account.Region, account account.Account) ([]cloud.Res
 			return nil, err
 		}
 
-		roles = append(roles, Role{
+		roles = append(roles, RamRole{
 			RoleInListRoles: role,
 			Policies:        policies,
 		})
@@ -52,15 +52,15 @@ func (r Roles) List(region account.Region, account account.Account) ([]cloud.Res
 	return roles, nil
 }
 
-func (r Role) Id() string {
+func (r RamRole) Id() string {
 	return r.RoleName
 }
 
-func (r Role) Type() string {
+func (r RamRole) Type() string {
 	return "RAM role"
 }
 
-func (r Role) Delete(region account.Region, account account.Account) error {
+func (r RamRole) Delete(region account.Region, account account.Account) error {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

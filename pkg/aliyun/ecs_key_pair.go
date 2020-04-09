@@ -1,36 +1,34 @@
-package ecs
+package aliyun
 
 import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
-	"github.com/xebia/aliyun-nuke/pkg/nuker"
-
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type KeyPairs struct{}
+type EcsKeyPairs struct{}
 
-type KeyPair struct {
+type EcsKeyPair struct {
 	ecs.KeyPair
 }
 
 func init() {
-	cloud.RegisterService(KeyPairs{})
+	cloud.RegisterService(EcsKeyPairs{})
 }
 
-func (k KeyPairs) IsGlobal() bool {
+func (k EcsKeyPairs) IsGlobal() bool {
 	return false
 }
 
-func (k KeyPairs) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (k EcsKeyPairs) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
 	}
 
 	request := ecs.CreateDescribeKeyPairsRequest()
-	request.PageSize = "99"
+	request.PageSize = "50"
 	response, err := client.DescribeKeyPairs(request)
 	if err != nil {
 		return nil, err
@@ -38,21 +36,21 @@ func (k KeyPairs) List(region account.Region, account account.Account) ([]cloud.
 
 	keyPairs := make([]cloud.Resource, 0)
 	for _, keyPair := range response.KeyPairs.KeyPair {
-		keyPairs = append(keyPairs, KeyPair{KeyPair: keyPair})
+		keyPairs = append(keyPairs, EcsKeyPair{KeyPair: keyPair})
 	}
 
 	return keyPairs, nil
 }
 
-func (k KeyPair) Id() string {
+func (k EcsKeyPair) Id() string {
 	return k.KeyPairName
 }
 
-func (k KeyPair) Type() string {
+func (k EcsKeyPair) Type() string {
 	return "SSH key pair"
 }
 
-func (k KeyPair) Delete(region account.Region, account account.Account) error {
+func (k EcsKeyPair) Delete(region account.Region, account account.Account) error {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

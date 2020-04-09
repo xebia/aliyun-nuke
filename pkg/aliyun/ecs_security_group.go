@@ -1,28 +1,26 @@
-package ecs
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
-	"github.com/xebia/aliyun-nuke/pkg/nuker"
-
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type SecurityGroups struct{}
+type EcsSecurityGroups struct{}
 
-type SecurityGroup struct {
+type EcsSecurityGroup struct {
 	ecs.SecurityGroup
 }
 
 func init() {
-	cloud.RegisterService(SecurityGroups{})
+	cloud.RegisterService(EcsSecurityGroups{})
 }
 
-func (s SecurityGroups) IsGlobal() bool {
+func (s EcsSecurityGroups) IsGlobal() bool {
 	return false
 }
 
-func (s SecurityGroups) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (s EcsSecurityGroups) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -37,21 +35,21 @@ func (s SecurityGroups) List(region account.Region, account account.Account) ([]
 
 	groups := make([]cloud.Resource, 0)
 	for _, securityGroup := range response.SecurityGroups.SecurityGroup {
-		groups = append(groups, SecurityGroup{SecurityGroup: securityGroup})
+		groups = append(groups, EcsSecurityGroup{SecurityGroup: securityGroup})
 	}
 
 	return groups, nil
 }
 
-func (s SecurityGroup) Id() string {
+func (s EcsSecurityGroup) Id() string {
 	return s.SecurityGroupId
 }
 
-func (s SecurityGroup) Type() string {
+func (s EcsSecurityGroup) Type() string {
 	return "Security group"
 }
 
-func (s SecurityGroup) Delete(region account.Region, account account.Account) error {
+func (s EcsSecurityGroup) Delete(region account.Region, account account.Account) error {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

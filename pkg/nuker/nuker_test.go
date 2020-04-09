@@ -40,48 +40,67 @@ func TestNuke(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []cloud.Resource
+		want []NukeResult
 	}{
 		{
 			name: "No-op returns empty list of deleted resources",
 			args: args{currentAccount: account.Account{}, services: []cloud.Service{}, regions: []account.Region{"region-0"}},
-			want: []cloud.Resource{},
+			want: []NukeResult{},
 		},
 		{
 			name: "Returns deleted resources of a single region",
 			args: args{currentAccount: account.Account{}, services: []cloud.Service{dummyService{}}, regions: []account.Region{"region-1"}},
-			want: []cloud.Resource{
-				dummyResource{Name: "Resource 1"},
-				dummyResource{Name: "Resource 2"},
-				dummyResource{Name: "Resource 3"},
+			want: []NukeResult{
+				{
+					Success:  true,
+					Resource: dummyResource{Name: "Resource 1"},
+					Error:    nil,
+				},
+				{
+					Success:  true,
+					Resource: dummyResource{Name: "Resource 2"},
+					Error:    nil,
+				},
+				{
+					Success:  true,
+					Resource: dummyResource{Name: "Resource 3"},
+					Error:    nil,
+				},
 			},
 		},
 		{
 			name: "Returns deleted resources of multiple regions",
 			args: args{currentAccount: account.Account{}, services: []cloud.Service{dummyService{}}, regions: []account.Region{"region-2", "region-3"}},
-			want: []cloud.Resource{
-				dummyResource{Name: "Resource 1"},
-				dummyResource{Name: "Resource 2"},
-				dummyResource{Name: "Resource 3"},
+			want: []NukeResult{
+				{
+					Success:  true,
+					Resource: dummyResource{Name: "Resource 1"},
+					Error:    nil,
+				},
+				{
+					Success:  true,
+					Resource: dummyResource{Name: "Resource 2"},
+					Error:    nil,
+				},
+				{
+					Success:  true,
+					Resource: dummyResource{Name: "Resource 3"},
+					Error:    nil,
+				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			done, deletions, errors := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions)
-
-			got := make([]cloud.Resource, 0)
-			gotErrors := make([]error, 0)
-			isDone := false
-			for !isDone {
-				select {
-				case <-done:
-					isDone = true
-				case resource := <-deletions:
-					got = append(got, resource)
-				case err := <-errors:
-					gotErrors = append(gotErrors, err)
-
+			results := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions)
+			expected := tt.want
+			got := make([]NukeResult, 0)
+			for result := range results {
+				got = append(got, result)
+			}
+			for _, gotResource := range got {
+				if !contains(expected, gotResource) {
+					t.Errorf("Nuke() returned unexpected result %v, wanted: %v", gotResource, tt.want)
 				}
 			}
 		})
@@ -114,9 +133,9 @@ func (d dummyResource) Type() string {
 	return "dummyResource"
 }
 
-func contains(resources []cloud.Resource, resource cloud.Resource) bool {
-	for _, item := range resources {
-		if item == resource {
+func contains(results []NukeResult, result NukeResult) bool {
+	for _, item := range results {
+		if item == result {
 			return true
 		}
 	}

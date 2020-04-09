@@ -1,4 +1,4 @@
-package ram
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
@@ -7,9 +7,9 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Users struct{}
+type RamUsers struct{}
 
-type User struct {
+type RamUser struct {
 	ram.UserInListUsers
 
 	AccessKeys []account.Credentials
@@ -18,14 +18,14 @@ type User struct {
 }
 
 func init() {
-	cloud.RegisterService(Users{})
+	cloud.RegisterService(RamUsers{})
 }
 
-func (u Users) IsGlobal() bool {
+func (u RamUsers) IsGlobal() bool {
 	return true
 }
 
-func (u Users) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (u RamUsers) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (u Users) List(region account.Region, account account.Account) ([]cloud.Res
 			return nil, err
 		}
 
-		users = append(users, User{
+		users = append(users, RamUser{
 			UserInListUsers: user,
 			AccessKeys:      accessKeys,
 			Policies:        policies,
@@ -66,15 +66,15 @@ func (u Users) List(region account.Region, account account.Account) ([]cloud.Res
 	return users, nil
 }
 
-func (u User) Id() string {
+func (u RamUser) Id() string {
 	return u.UserName
 }
 
-func (u User) Type() string {
+func (u RamUser) Type() string {
 	return "RAM user"
 }
 
-func (u User) Delete(region account.Region, account account.Account) error {
+func (u RamUser) Delete(region account.Region, account account.Account) error {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

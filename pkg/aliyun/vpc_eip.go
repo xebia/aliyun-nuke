@@ -1,4 +1,4 @@
-package vpc
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
@@ -7,21 +7,21 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Eips struct{}
+type VpcEips struct{}
 
-type Eip struct {
+type VpcEip struct {
 	vpc.EipAddress
 }
 
 func init() {
-	cloud.RegisterService(Eips{})
+	cloud.RegisterService(VpcEips{})
 }
 
-func (e Eips) IsGlobal() bool {
+func (e VpcEips) IsGlobal() bool {
 	return false
 }
 
-func (e Eips) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (e VpcEips) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -36,20 +36,20 @@ func (e Eips) List(region account.Region, account account.Account) ([]cloud.Reso
 
 	eips := make([]cloud.Resource, 0)
 	for _, eip := range response.EipAddresses.EipAddress {
-		eips = append(eips, Eip{EipAddress:eip})
+		eips = append(eips, VpcEip{EipAddress: eip})
 	}
 	return eips, nil
 }
 
-func (e Eip) Id() string {
+func (e VpcEip) Id() string {
 	return e.AllocationId
 }
 
-func (e Eip) Type() string {
+func (e VpcEip) Type() string {
 	return "EIP"
 }
 
-func (e Eip) Delete(region account.Region, account account.Account) error {
+func (e VpcEip) Delete(region account.Region, account account.Account) error {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

@@ -1,4 +1,4 @@
-package ecs
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
@@ -6,21 +6,21 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Instances struct{}
+type EcsInstances struct{}
 
-type Instance struct {
+type EcsInstance struct {
 	ecs.InstanceInDescribeInstances
 }
 
 func init() {
-	cloud.RegisterService(Instances{})
+	cloud.RegisterService(EcsInstances{})
 }
 
-func (i Instances) IsGlobal() bool {
+func (i EcsInstances) IsGlobal() bool {
 	return false
 }
 
-func (i Instances) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (i EcsInstances) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -35,21 +35,21 @@ func (i Instances) List(region account.Region, account account.Account) ([]cloud
 
 	instances := make([]cloud.Resource, 0)
 	for _, instance := range response.Instances.Instance {
-		instances = append(instances, Instance{InstanceInDescribeInstances: instance})
+		instances = append(instances, EcsInstance{InstanceInDescribeInstances: instance})
 	}
 
 	return instances, nil
 }
 
-func (i Instance) Id() string {
+func (i EcsInstance) Id() string {
 	return i.InstanceId
 }
 
-func (i Instance) Type() string {
+func (i EcsInstance) Type() string {
 	return "ECS instance"
 }
 
-func (i Instance) Delete(region account.Region, account account.Account) error {
+func (i EcsInstance) Delete(region account.Region, account account.Account) error {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

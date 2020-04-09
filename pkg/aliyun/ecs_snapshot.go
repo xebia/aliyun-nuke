@@ -1,4 +1,4 @@
-package ecs
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
@@ -6,21 +6,21 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Snapshots struct{}
+type EcsSnapshots struct{}
 
-type Snapshot struct {
+type EcsSnapshot struct {
 	ecs.Snapshot
 }
 
 func init() {
-	cloud.RegisterService(Snapshots{})
+	cloud.RegisterService(EcsSnapshots{})
 }
 
-func (s Snapshots) IsGlobal() bool {
+func (s EcsSnapshots) IsGlobal() bool {
 	return false
 }
 
-func (s Snapshots) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (s EcsSnapshots) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -35,21 +35,21 @@ func (s Snapshots) List(region account.Region, account account.Account) ([]cloud
 
 	snapshots := make([]cloud.Resource, 0)
 	for _, snapshot := range response.Snapshots.Snapshot {
-		snapshots = append(snapshots, Snapshot{Snapshot: snapshot})
+		snapshots = append(snapshots, EcsSnapshot{Snapshot: snapshot})
 	}
 
 	return snapshots, nil
 }
 
-func (s Snapshot) Id() string {
+func (s EcsSnapshot) Id() string {
 	return s.SnapshotId
 }
 
-func (s Snapshot) Type() string {
-	return "Snapshot"
+func (s EcsSnapshot) Type() string {
+	return "EcsSnapshot"
 }
 
-func (s Snapshot) Delete(region account.Region, account account.Account) error {
+func (s EcsSnapshot) Delete(region account.Region, account account.Account) error {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

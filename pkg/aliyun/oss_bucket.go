@@ -1,4 +1,4 @@
-package oss
+package aliyun
 
 import (
 	"fmt"
@@ -8,9 +8,9 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Buckets struct{}
+type OssBuckets struct{}
 
-type Bucket struct {
+type OssBucket struct {
 	Name     string
 	Location string
 
@@ -22,14 +22,14 @@ type item struct {
 }
 
 func init() {
-	cloud.RegisterService(Buckets{})
+	cloud.RegisterService(OssBuckets{})
 }
 
-func (s Buckets) IsGlobal() bool {
+func (s OssBuckets) IsGlobal() bool {
 	return true
 }
 
-func (s Buckets) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (s OssBuckets) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := getOSSClient(account, "oss")
 
 	if err != nil {
@@ -43,7 +43,7 @@ func (s Buckets) List(region account.Region, account account.Account) ([]cloud.R
 
 	buckets := make([]cloud.Resource, len(bucketResult.Buckets))
 	for i, bucket := range bucketResult.Buckets {
-		b := Bucket{Name: bucket.Name, Location: bucket.Location}
+		b := OssBucket{Name: bucket.Name, Location: bucket.Location}
 		items, err := listItemsInBucket(account, b)
 		if err != nil {
 			return nil, err
@@ -56,15 +56,15 @@ func (s Buckets) List(region account.Region, account account.Account) ([]cloud.R
 	return buckets, nil
 }
 
-func (r Bucket) Id() string {
+func (r OssBucket) Id() string {
 	return fmt.Sprintf("%s (%d items)", r.Name, len(r.items))
 }
 
-func (r Bucket) Type() string {
+func (r OssBucket) Type() string {
 	return "OSS bucket"
 }
 
-func (r Bucket) Delete(region account.Region, account account.Account) error {
+func (r OssBucket) Delete(region account.Region, account account.Account) error {
 	client, err := getOSSClient(account, r.Location)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (r Bucket) Delete(region account.Region, account account.Account) error {
 	return nil
 }
 
-func listItemsInBucket(account account.Account, r Bucket) ([]item, error) {
+func listItemsInBucket(account account.Account, r OssBucket) ([]item, error) {
 	client, err := getOSSClient(account, r.Location)
 	if err != nil {
 		return nil, err

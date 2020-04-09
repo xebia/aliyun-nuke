@@ -1,4 +1,4 @@
-package vpc
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
@@ -7,21 +7,21 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type VSwitches struct{}
+type VpcVSwitches struct{}
 
-type VSwitch struct {
+type VpcVSwitch struct {
 	vpc.VSwitch
 }
 
 func init() {
-	cloud.RegisterService(VSwitches{})
+	cloud.RegisterService(VpcVSwitches{})
 }
 
-func (v VSwitches) IsGlobal() bool {
+func (v VpcVSwitches) IsGlobal() bool {
 	return false
 }
 
-func (v VSwitches) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (v VpcVSwitches) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -36,21 +36,21 @@ func (v VSwitches) List(region account.Region, account account.Account) ([]cloud
 
 	vswitches := make([]cloud.Resource, 0)
 	for _, vswitch := range response.VSwitches.VSwitch {
-		vswitches = append(vswitches, VSwitch{VSwitch: vswitch})
+		vswitches = append(vswitches, VpcVSwitch{VSwitch: vswitch})
 	}
 
 	return vswitches, nil
 }
 
-func (v VSwitch) Id() string {
+func (v VpcVSwitch) Id() string {
 	return v.VSwitchId
 }
 
-func (v VSwitch) Type() string {
-	return "VSwitch"
+func (v VpcVSwitch) Type() string {
+	return "VpcVSwitch"
 }
 
-func (v VSwitch) Delete(region account.Region, account account.Account) error {
+func (v VpcVSwitch) Delete(region account.Region, account account.Account) error {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err

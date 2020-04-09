@@ -1,4 +1,4 @@
-package ram
+package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
@@ -7,21 +7,21 @@ import (
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 )
 
-type Policies struct{}
+type RamPolicies struct{}
 
-type Policy struct {
+type RamPolicy struct {
 	ram.PolicyInListPolicies
 }
 
 func init() {
-	cloud.RegisterService(Policies{})
+	cloud.RegisterService(RamPolicies{})
 }
 
-func (p Policies) IsGlobal() bool {
+func (p RamPolicies) IsGlobal() bool {
 	return true
 }
 
-func (p Policies) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (p RamPolicies) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (p Policies) List(region account.Region, account account.Account) ([]cloud.
 
 	policies := make([]cloud.Resource, 0)
 	for _, policy := range response.Policies.Policy {
-		policies = append(policies, Policy{
+		policies = append(policies, RamPolicy{
 			PolicyInListPolicies: policy,
 		})
 	}
@@ -45,15 +45,15 @@ func (p Policies) List(region account.Region, account account.Account) ([]cloud.
 	return policies, nil
 }
 
-func (p Policy) Id() string {
+func (p RamPolicy) Id() string {
 	return p.PolicyName
 }
 
-func (p Policy) Type() string {
+func (p RamPolicy) Type() string {
 	return "RAM policy"
 }
 
-func (p Policy) Delete(region account.Region, account account.Account) error {
+func (p RamPolicy) Delete(region account.Region, account account.Account) error {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err
