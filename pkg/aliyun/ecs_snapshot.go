@@ -46,7 +46,7 @@ func (s EcsSnapshot) Id() string {
 }
 
 func (s EcsSnapshot) Type() string {
-	return "EcsSnapshot"
+	return "Snapshot"
 }
 
 func (s EcsSnapshot) Delete(region account.Region, account account.Account) error {

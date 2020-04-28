@@ -41,33 +41,34 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 					serviceLeftOverCount := 0
 
 					if service.IsGlobal() {
-						found, deleted, err := deleteResourcesForServiceInRegion(service, "eu-central-1", currentAccount)
+						found, deleted, errors := deleteResourcesForServiceInRegion(service, "eu-central-1", currentAccount)
+
 						leftOvers := len(found) - len(deleted)
 						serviceLeftOverCount += leftOvers
+						totalLeftOverCount += leftOvers
 
-						if err != nil {
+						for _, resource := range deleted {
+							results <- NukeResult{Success: true, Resource: resource}
+						}
+
+						for _, err := range errors {
 							results <- NukeResult{Success: false, Error: err}
-						} else {
-							totalLeftOverCount += leftOvers
-							for _, resource := range deleted {
-								results <- NukeResult{Success: true, Resource: resource}
-							}
 						}
 					} else {
 						for _, region := range regions {
 							if !elementIn(emptyRegionsPerService[serviceType], string(region)) {
-								found, deleted, err := deleteResourcesForServiceInRegion(service, region, currentAccount)
+								found, deleted, errors := deleteResourcesForServiceInRegion(service, region, currentAccount)
 
 								leftOvers := len(found) - len(deleted)
 								serviceLeftOverCount += leftOvers
 								totalLeftOverCount += leftOvers
 
-								if err != nil {
+								for _, resource := range deleted {
+									results <- NukeResult{Success: true, Resource: resource}
+								}
+
+								for _, err := range errors {
 									results <- NukeResult{Success: false, Error: err}
-								} else {
-									for _, resource := range deleted {
-										results <- NukeResult{Success: true, Resource: resource}
-									}
 								}
 
 								if (leftOvers) < 1 {
@@ -108,21 +109,23 @@ func elementIn(elements []string, element string) bool {
 	return false
 }
 
-func deleteResourcesForServiceInRegion(service cloud.Service, region account.Region, currentAccount account.Account) ([]cloud.Resource, []cloud.Resource, error) {
+func deleteResourcesForServiceInRegion(service cloud.Service, region account.Region, currentAccount account.Account) ([]cloud.Resource, []cloud.Resource, []error) {
 	foundResources, err := service.List(region, currentAccount)
+
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, []error{err}
 	}
 
 	deletedResources := make([]cloud.Resource, 0)
+	errors := make([]error, 0)
 	for _, resource := range foundResources {
 		err := resource.Delete(region, currentAccount)
 		if err != nil {
-			return foundResources, deletedResources, err
+			errors = append(errors, err)
 		} else {
 			deletedResources = append(deletedResources, resource)
 		}
 	}
 
-	return foundResources, deletedResources, nil
+	return foundResources, deletedResources, errors
 }
