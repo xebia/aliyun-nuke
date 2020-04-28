@@ -2,10 +2,10 @@ package nuker
 
 import (
 	"github.com/xebia/aliyun-nuke/pkg/account"
+	_ "github.com/xebia/aliyun-nuke/pkg/aliyun"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
 	"reflect"
-
-	_ "github.com/xebia/aliyun-nuke/pkg/aliyun"
+	"time"
 )
 
 type NukeResult struct {
@@ -30,8 +30,8 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 	go func() {
 		defer close(results)
 
-		maxNonEmptyRetries := 3
-		currentNonEmptyRetry := 0
+		maxRetries := 10
+		currentRetry := 0
 		for {
 			totalLeftOverCount := 0
 
@@ -85,10 +85,13 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 				}
 			}
 
-			if totalLeftOverCount == 0 || currentNonEmptyRetry == maxNonEmptyRetries {
+			if totalLeftOverCount == 0 || currentRetry == maxRetries {
 				break
 			} else {
-				currentNonEmptyRetry++
+				// Sleep to allow some time for deletion
+				time.Sleep(1 * time.Second)
+
+				currentRetry++
 			}
 		}
 	}()
