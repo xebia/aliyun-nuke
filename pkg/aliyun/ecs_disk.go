@@ -10,7 +10,7 @@ import (
 type EcsDisks struct{}
 
 type EcsDisk struct {
-	ecs.DiskInDescribeDisks
+	ecs.Disk
 
 	DiskType string
 }
@@ -38,7 +38,7 @@ func (d EcsDisks) List(region account.Region, account account.Account) ([]cloud.
 
 	disks := make([]cloud.Resource, 0)
 	for _, disk := range response.Disks.Disk {
-		disks = append(disks, EcsDisk{DiskInDescribeDisks: disk, DiskType: disk.Type})
+		disks = append(disks, EcsDisk{Disk: disk, DiskType: disk.Type})
 	}
 
 	return disks, nil

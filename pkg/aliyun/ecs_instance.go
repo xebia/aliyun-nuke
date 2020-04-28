@@ -9,7 +9,7 @@ import (
 type EcsInstances struct{}
 
 type EcsInstance struct {
-	ecs.InstanceInDescribeInstances
+	ecs.Instance
 }
 
 func init() {
@@ -35,7 +35,7 @@ func (i EcsInstances) List(region account.Region, account account.Account) ([]cl
 
 	instances := make([]cloud.Resource, 0)
 	for _, instance := range response.Instances.Instance {
-		instances = append(instances, EcsInstance{InstanceInDescribeInstances: instance})
+		instances = append(instances, EcsInstance{Instance: instance})
 	}
 
 	return instances, nil
