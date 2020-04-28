@@ -47,7 +47,7 @@ func (v VpcVSwitch) Id() string {
 }
 
 func (v VpcVSwitch) Type() string {
-	return "VpcVSwitch"
+	return "VSwitch"
 }
 
 func (v VpcVSwitch) Delete(region account.Region, account account.Account) error {
