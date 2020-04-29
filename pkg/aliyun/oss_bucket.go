@@ -10,6 +10,8 @@ import (
 
 type OssBuckets struct{}
 
+const START string = ""
+
 type OssBucket struct {
 	Name     string
 	Location string
@@ -101,17 +103,40 @@ func listItemsInBucket(account account.Account, r OssBucket) ([]item, error) {
 		return nil, err
 	}
 
-	itemResult, err := bucket.ListObjects()
-	if err != nil {
-		return nil, err
-	}
-
-	items := make([]item, len(itemResult.Objects))
-	for i, object := range itemResult.Objects {
+	itemResults, err := getItemsFromMarker(bucket, START)
+	items := make([]item, len(itemResults))
+	for i, object := range itemResults {
 		items[i] = item{Key: object.Key}
 	}
 
 	return items, nil
+}
+
+func getItemsFromMarker(bucket *oss.Bucket, start string) ([]oss.ObjectProperties, error) {
+	results := make([]oss.ObjectProperties, 0)
+	options := make([]oss.Option, 0)
+	if len(start) > 0 {
+		options = append(options, oss.Marker(start))
+	}
+
+	itemResult, err := bucket.ListObjects(options...)
+	if err != nil {
+		return results, err
+	}
+
+	for _, item := range itemResult.Objects {
+		results = append(results, item)
+	}
+
+	if len(itemResult.NextMarker) > 0 {
+		moreResults, err := getItemsFromMarker(bucket, itemResult.NextMarker)
+		if err != nil {
+			return results, err
+		}
+		results = append(results, moreResults...)
+	}
+
+	return results, nil
 }
 
 func getOSSClient(account account.Account, endpoint string) (*oss.Client, error) {
