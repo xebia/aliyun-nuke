@@ -30,7 +30,7 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 	go func() {
 		defer close(results)
 
-		maxRetries := 10
+		maxRetries := 60
 		currentRetry := 0
 		for {
 			totalLeftOverCount := 0
