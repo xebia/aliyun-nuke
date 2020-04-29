@@ -7,6 +7,8 @@ github.com/aliyun/alibaba-cloud-sdk-go v1.61.84 h1:FcYuRGV13xZc+wBKskuGNpxkr4/qc
 github.com/aliyun/alibaba-cloud-sdk-go v1.61.84/go.mod h1:v8ESoHo4SyHmuB4b1tJqDHxfTGEciD+yhvOU/5s1Rfk=
 github.com/aliyun/alibaba-cloud-sdk-go v1.61.155 h1:D43eJsAnTv/daty7NE1SWPtTqlJOokUlVJjYYQDpX/A=
 github.com/aliyun/alibaba-cloud-sdk-go v1.61.155/go.mod h1:pUKYbK5JQ+1Dfxk80P0qxGqe5dkxDoabbZS7zOcouyA=
+github.com/aliyun/alibaba-cloud-sdk-go v1.61.163 h1:zTLeZyNWZKK8YhzXYgUZ1SFk4IjOO3YwlvEY5rYTW4g=
+github.com/aliyun/alibaba-cloud-sdk-go v1.61.163/go.mod h1:pUKYbK5JQ+1Dfxk80P0qxGqe5dkxDoabbZS7zOcouyA=
 github.com/aliyun/aliyun-oss-go-sdk v2.0.7+incompatible h1:HXvOJsZw8JT/ldxjX74Aq4H2IY4ojV/mXMDPWFitpv8=
 github.com/aliyun/aliyun-oss-go-sdk v2.0.7+incompatible/go.mod h1:T/Aws4fEfogEE9v+HPhhw+CntffsBHJ8nXQCwKr0/g8=
 github.com/aliyun/aliyun-oss-go-sdk v2.1.0+incompatible h1:90Z2Cp7EqcbaYfVwVjmQoK8kgoFPz+doQlujcwe1BRg=
