@@ -50,6 +50,8 @@ var destroyCmd = &cobra.Command{
 		for result := range results {
 			if result.Success {
 				log.Println(fmt.Sprintf("Nuked: %s - %s", result.Resource.Type(), result.Resource.Id()))
+			} else {
+				log.Println(result.Error)
 			}
 		}
 		log.Println("Account has converged or max. retries exhausted")

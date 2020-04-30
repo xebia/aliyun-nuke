@@ -11,6 +11,8 @@ type RamPolicies struct{}
 
 type RamPolicy struct {
 	ram.PolicyInListPolicies
+
+	Versions []ram.PolicyVersionInListPolicyVersions
 }
 
 func init() {
@@ -37,8 +39,24 @@ func (p RamPolicies) List(region account.Region, account account.Account) ([]clo
 
 	policies := make([]cloud.Resource, 0)
 	for _, policy := range response.Policies.Policy {
+		versions := make([]ram.PolicyVersionInListPolicyVersions, 0)
+		if policy.PolicyType == "Custom" {
+			policyVersionsRequest := ram.CreateListPolicyVersionsRequest()
+			policyVersionsRequest.Scheme = "https"
+			policyVersionsRequest.PolicyName = policy.PolicyName
+			policyVersionsRequest.PolicyType = policy.PolicyType
+			policyVersionsResponse, err := client.ListPolicyVersions(policyVersionsRequest)
+
+			if err != nil {
+				return nil, err
+			}
+
+			versions = policyVersionsResponse.PolicyVersions.PolicyVersion
+		}
+
 		policies = append(policies, RamPolicy{
 			PolicyInListPolicies: policy,
+			Versions: versions,
 		})
 	}
 
@@ -57,6 +75,16 @@ func (p RamPolicy) Delete(region account.Region, account account.Account) error 
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return err
+	}
+
+	if len(p.Versions) > 0 {
+		for _, version := range p.Versions {
+			deletePolicyVersionRequest := ram.CreateDeletePolicyVersionRequest()
+			deletePolicyVersionRequest.Scheme = "https"
+			deletePolicyVersionRequest.PolicyName = p.PolicyName
+			deletePolicyVersionRequest.VersionId = version.VersionId
+			_, _ = client.DeletePolicyVersion(deletePolicyVersionRequest)
+		}
 	}
 
 	request := ram.CreateDeletePolicyRequest()
