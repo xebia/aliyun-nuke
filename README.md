@@ -4,7 +4,9 @@ Clears out all resources in a given Alibaba Cloud account. **Use with extreme ca
 
 ## Deletion process
 
-Because Alibaba Cloud has many regions and every region can contain different resources, aliyun-nuke loops over all services and all regions to bruteforce the deletion of the resources. If a resource cannot be deleted because a dependent resource still exists, the dependent resource is deleted first and the process is started again. This repeats until no more resources were deleted for a single run.
+Because Alibaba Cloud has many regions and every region can contain different resources, `aliyun-nuke` loops over all services and all regions to bruteforce the deletion of the resources. 
+If a resource cannot be deleted because a dependent resource still exists, the dependent resource is deleted first and the process is started again. This repeats until no more resources 
+were deleted for a single run.
 
 ## Supported services
 
@@ -19,7 +21,7 @@ Currently supported services are:
 | SLB                | Load balancers                                          |
 | VPC                | VPCs, VSwitches, NAT gateways, EIPs                     |
 
-Any other resources will be kept as-is. If any unsupported resources block the deletion of the above resource types, aliyun-nuke will stop the deletion process and quit
+Any other resources will be kept as-is. If any unsupported resources block the deletion of the above resource types, `aliyun-nuke` will stop the deletion process and quit
 after 60 seconds of retrying.
 
 ## Getting started as CLI tool
@@ -35,15 +37,22 @@ export ALIYUN_NUKE_ACCESS_KEY_SECRET=--YOUR ACCESS KEY SECRET--
 
 You can find these on the [AccessKey](https://ak-console.aliyun.com/) page in the Alibaba Cloud console. If you haven't created access keys before you might have to create them.
 
-Then run aliyun-nuke to clear the account:
+Then run `aliyun-nuke` to clear the account:
 
 ```bash
-./aliyun-nuke
+./aliyun-nuke destroy [--regions <region1,region2,...>]
+```
+
+If you want to see the help for the CLI or a subcommand, use the `help` subcommand:
+
+```bash
+./aliyun-nuke help
+./aliyun-nuke help destroy
 ```
 
 ## Library usage
 
-aliyun-nuke can also be used as a library:
+`aliyun-nuke` can also be used as a library:
 
 ```go
 package main
