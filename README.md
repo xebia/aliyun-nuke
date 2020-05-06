@@ -69,8 +69,9 @@ func main() {
 			AccessKeySecret: "--YOUR ACCESS KEY SECRET--",
 		},
 	}
-
-	results := nuker.NukeItAll(currentAccount, account.AllRegions)
+    
+    excludedIds := make([]string, 0) // fill this with resource IDs that you don't want to have deleted
+	results := nuker.NukeItAll(currentAccount, account.AllRegions, excludedIds)
     for range results {
         // process results (always consume this channel!)	
     }

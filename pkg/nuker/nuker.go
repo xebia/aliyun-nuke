@@ -9,19 +9,20 @@ import (
 )
 
 type NukeResult struct {
-	Success  bool
 	Resource cloud.Resource
+	Success  bool
+	Skipped  bool
 	Error    error
 }
 
 // NukeItAll will nuke (delete) all Alibaba Cloud services in the specified regions
-func NukeItAll(currentAccount account.Account, regions []account.Region) <-chan NukeResult {
-	return Nuke(currentAccount, cloud.Services, regions)
+func NukeItAll(currentAccount account.Account, regions []account.Region, excludedIds []string) <-chan NukeResult {
+	return Nuke(currentAccount, cloud.Services, regions, excludedIds)
 }
 
 // Nuke removes all resources of specified services in specified regions in a loop.
 // It will keep on going until no resources were deleted any more.
-func Nuke(currentAccount account.Account, services []cloud.Service, regions []account.Region) <-chan NukeResult {
+func Nuke(currentAccount account.Account, services []cloud.Service, regions []account.Region, excludedIds []string) <-chan NukeResult {
 	results := make(chan NukeResult)
 
 	emptyServices := make([]string, len(services))
@@ -41,9 +42,9 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 					serviceLeftOverCount := 0
 
 					if service.IsGlobal() {
-						found, deleted, errors := deleteResourcesForServiceInRegion(service, "eu-central-1", currentAccount)
+						found, deleted, skipped, errors := deleteResourcesForServiceInRegion(service, "eu-central-1", currentAccount, excludedIds)
 
-						leftOvers := len(found) - len(deleted)
+						leftOvers := len(found) - len(deleted) - len(skipped)
 						serviceLeftOverCount += leftOvers
 						totalLeftOverCount += leftOvers
 
@@ -54,12 +55,16 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 						for _, err := range errors {
 							results <- NukeResult{Success: false, Error: err}
 						}
+
+						for _, skipped := range skipped {
+							results <- NukeResult{Skipped: true, Resource: skipped}
+						}
 					} else {
 						for _, region := range regions {
 							if !elementIn(emptyRegionsPerService[serviceType], string(region)) {
-								found, deleted, errors := deleteResourcesForServiceInRegion(service, region, currentAccount)
+								found, deleted, skipped, errors:= deleteResourcesForServiceInRegion(service, region, currentAccount, excludedIds)
 
-								leftOvers := len(found) - len(deleted)
+								leftOvers := len(found) - len(deleted) - len(skipped)
 								serviceLeftOverCount += leftOvers
 								totalLeftOverCount += leftOvers
 
@@ -69,6 +74,10 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 
 								for _, err := range errors {
 									results <- NukeResult{Success: false, Error: err}
+								}
+
+								for _, skipped := range skipped {
+									results <- NukeResult{Skipped: true, Resource: skipped}
 								}
 
 								if (leftOvers) < 1 {
@@ -109,23 +118,28 @@ func elementIn(elements []string, element string) bool {
 	return false
 }
 
-func deleteResourcesForServiceInRegion(service cloud.Service, region account.Region, currentAccount account.Account) ([]cloud.Resource, []cloud.Resource, []error) {
+func deleteResourcesForServiceInRegion(service cloud.Service, region account.Region, currentAccount account.Account, excludedIds []string) ([]cloud.Resource, []cloud.Resource, []cloud.Resource, []error) {
 	foundResources, err := service.List(region, currentAccount)
 
 	if err != nil {
-		return nil, nil, []error{err}
+		return nil, nil, nil, []error{err}
 	}
 
 	deletedResources := make([]cloud.Resource, 0)
+	skippedResources := make([]cloud.Resource, 0)
 	errors := make([]error, 0)
 	for _, resource := range foundResources {
-		err := resource.Delete(region, currentAccount)
-		if err != nil {
-			errors = append(errors, err)
+		if !elementIn(excludedIds, resource.Id()) {
+			err := resource.Delete(region, currentAccount)
+			if err != nil {
+				errors = append(errors, err)
+			} else {
+				deletedResources = append(deletedResources, resource)
+			}
 		} else {
-			deletedResources = append(deletedResources, resource)
+			skippedResources = append(skippedResources, resource)
 		}
 	}
 
-	return foundResources, deletedResources, errors
+	return foundResources, deletedResources, skippedResources, errors
 }
