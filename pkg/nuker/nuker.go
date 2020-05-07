@@ -16,13 +16,13 @@ type NukeResult struct {
 }
 
 // NukeItAll will nuke (delete) all Alibaba Cloud services in the specified regions
-func NukeItAll(currentAccount account.Account, regions []account.Region, excludedIds []string) <-chan NukeResult {
-	return Nuke(currentAccount, cloud.Services, regions, excludedIds)
+func NukeItAll(currentAccount account.Account, regions []account.Region, excludedIds []string, force bool) <-chan NukeResult {
+	return Nuke(currentAccount, cloud.Services, regions, excludedIds, force)
 }
 
 // Nuke removes all resources of specified services in specified regions in a loop.
 // It will keep on going until no resources were deleted any more.
-func Nuke(currentAccount account.Account, services []cloud.Service, regions []account.Region, excludedIds []string) <-chan NukeResult {
+func Nuke(currentAccount account.Account, services []cloud.Service, regions []account.Region, excludedIds []string, force bool) <-chan NukeResult {
 	results := make(chan NukeResult)
 
 	emptyServices := make([]string, len(services))
@@ -42,7 +42,7 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 					serviceLeftOverCount := 0
 
 					if service.IsGlobal() {
-						found, deleted, skipped, errors := deleteResourcesForServiceInRegion(service, "eu-central-1", currentAccount, excludedIds)
+						found, deleted, skipped, errors := deleteResourcesForServiceInRegion(service, "eu-central-1", currentAccount, excludedIds, force)
 
 						leftOvers := len(found) - len(deleted) - len(skipped)
 						serviceLeftOverCount += leftOvers
@@ -62,7 +62,7 @@ func Nuke(currentAccount account.Account, services []cloud.Service, regions []ac
 					} else {
 						for _, region := range regions {
 							if !elementIn(emptyRegionsPerService[serviceType], string(region)) {
-								found, deleted, skipped, errors:= deleteResourcesForServiceInRegion(service, region, currentAccount, excludedIds)
+								found, deleted, skipped, errors := deleteResourcesForServiceInRegion(service, region, currentAccount, excludedIds, force)
 
 								leftOvers := len(found) - len(deleted) - len(skipped)
 								serviceLeftOverCount += leftOvers
@@ -118,8 +118,8 @@ func elementIn(elements []string, element string) bool {
 	return false
 }
 
-func deleteResourcesForServiceInRegion(service cloud.Service, region account.Region, currentAccount account.Account, excludedIds []string) ([]cloud.Resource, []cloud.Resource, []cloud.Resource, []error) {
-	foundResources, err := service.List(region, currentAccount)
+func deleteResourcesForServiceInRegion(service cloud.Service, region account.Region, currentAccount account.Account, excludedIds []string, force bool) ([]cloud.Resource, []cloud.Resource, []cloud.Resource, []error) {
+	foundResources, err := service.List(region, currentAccount, force)
 
 	if err != nil {
 		return nil, nil, nil, []error{err}

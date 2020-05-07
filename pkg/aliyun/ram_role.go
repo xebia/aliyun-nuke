@@ -2,9 +2,9 @@ package aliyun
 
 import (
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
-
 	"github.com/xebia/aliyun-nuke/pkg/account"
 	"github.com/xebia/aliyun-nuke/pkg/cloud"
+	"strings"
 )
 
 type RamRoles struct{}
@@ -23,7 +23,7 @@ func (r RamRoles) IsGlobal() bool {
 	return true
 }
 
-func (r RamRoles) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (r RamRoles) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
@@ -38,15 +38,17 @@ func (r RamRoles) List(region account.Region, account account.Account) ([]cloud.
 
 	roles := make([]cloud.Resource, 0)
 	for _, role := range response.Roles.Role {
-		policies, err := fetchPoliciesForRole(client, role.RoleName)
-		if err != nil {
-			return nil, err
-		}
+		if force || !strings.HasPrefix(role.RoleName, "Aliyun") {
+			policies, err := fetchPoliciesForRole(client, role.RoleName)
+			if err != nil {
+				return nil, err
+			}
 
-		roles = append(roles, RamRole{
-			RoleInListRoles: role,
-			Policies:        policies,
-		})
+			roles = append(roles, RamRole{
+				RoleInListRoles: role,
+				Policies:        policies,
+			})
+		}
 	}
 
 	return roles, nil

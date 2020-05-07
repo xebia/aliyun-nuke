@@ -23,7 +23,7 @@ func (g RamGroups) IsGlobal() bool {
 	return true
 }
 
-func (g RamGroups) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (g RamGroups) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := ram.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err

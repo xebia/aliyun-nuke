@@ -21,7 +21,7 @@ func (k EcsKeyPairs) IsGlobal() bool {
 	return false
 }
 
-func (k EcsKeyPairs) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (k EcsKeyPairs) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err

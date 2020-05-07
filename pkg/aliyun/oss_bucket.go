@@ -31,7 +31,7 @@ func (s OssBuckets) IsGlobal() bool {
 	return true
 }
 
-func (s OssBuckets) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (s OssBuckets) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := getOSSClient(account, "oss")
 
 	if err != nil {

@@ -20,7 +20,7 @@ func (s EcsSecurityGroups) IsGlobal() bool {
 	return false
 }
 
-func (s EcsSecurityGroups) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (s EcsSecurityGroups) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err

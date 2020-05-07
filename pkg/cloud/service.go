@@ -6,7 +6,7 @@ import (
 
 // Service is a single service in a cloud provider
 type Service interface {
-	List(account.Region, account.Account) ([]Resource, error)
+	List(account.Region, account.Account, bool) ([]Resource, error)
 	IsGlobal() bool
 }
 

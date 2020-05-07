@@ -23,7 +23,7 @@ func (d EcsDisks) IsGlobal() bool {
 	return false
 }
 
-func (d EcsDisks) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (d EcsDisks) List(region account.Region, account account.Account, b bool) ([]cloud.Resource, error) {
 	client, err := ecs.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err

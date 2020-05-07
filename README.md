@@ -71,7 +71,8 @@ func main() {
 	}
     
     excludedIds := make([]string, 0) // fill this with resource IDs that you don't want to have deleted
-	results := nuker.NukeItAll(currentAccount, account.AllRegions, excludedIds)
+    force := false // set to true to also delete service resources, like RAM roles
+	results := nuker.NukeItAll(currentAccount, account.AllRegions, excludedIds, force)
     for range results {
         // process results (always consume this channel!)	
     }

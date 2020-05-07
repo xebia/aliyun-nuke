@@ -21,7 +21,7 @@ func (e VpcEips) IsGlobal() bool {
 	return false
 }
 
-func (e VpcEips) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (e VpcEips) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err

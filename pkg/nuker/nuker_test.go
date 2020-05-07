@@ -92,7 +92,7 @@ func TestNuke(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			results := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions)
+			results := Nuke(tt.args.currentAccount, tt.args.services, tt.args.regions, false)
 			expected := tt.want
 			got := make([]NukeResult, 0)
 			for result := range results {
@@ -111,7 +111,7 @@ func (d dummyService) IsGlobal() bool {
 	return false
 }
 
-func (d dummyService) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (d dummyService) List(region account.Region, account account.Account, b bool) ([]cloud.Resource, error) {
 	return dummyResources[string(region)], nil
 }
 

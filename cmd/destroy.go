@@ -12,6 +12,7 @@ import (
 
 var regions []string
 var excludedIds []string
+var force bool
 
 func init() {
 	defaultRegions := make([]string, 0)
@@ -21,6 +22,7 @@ func init() {
 
 	destroyCmd.Flags().StringSliceVarP(&regions, "regions", "r", defaultRegions, "Specify list of regions to destroy resources in")
 	destroyCmd.Flags().StringSliceVarP(&excludedIds, "exclude", "e", []string{}, "List of resource IDs to exclude from deletion")
+	destroyCmd.Flags().BoolVarP(&force, "force", "f", false, "Force deletion of all resources, including system resources")
 	rootCmd.AddCommand(destroyCmd)
 }
 
@@ -48,7 +50,7 @@ var destroyCmd = &cobra.Command{
 		}
 
 		log.Println(fmt.Sprintf("Starting destruction in regions: %s", regionsToDestroy))
-		results := nuker.NukeItAll(currentAccount, regionsToDestroy, excludedIds)
+		results := nuker.NukeItAll(currentAccount, regionsToDestroy, excludedIds, force)
 		for result := range results {
 			if result.Success {
 				log.Println(fmt.Sprintf("Nuked: %s - %s", result.Resource.Type(), result.Resource.Id()))

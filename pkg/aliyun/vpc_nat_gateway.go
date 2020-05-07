@@ -25,7 +25,7 @@ func (n VpcNatGateways) IsGlobal() bool {
 }
 
 // List returns a list of all NAT gateways
-func (n VpcNatGateways) List(region account.Region, account account.Account) ([]cloud.Resource, error) {
+func (n VpcNatGateways) List(region account.Region, account account.Account, force bool) ([]cloud.Resource, error) {
 	client, err := vpc.NewClientWithAccessKey(string(region), account.AccessKeyID, account.AccessKeySecret)
 	if err != nil {
 		return nil, err
