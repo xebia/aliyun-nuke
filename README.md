@@ -18,6 +18,7 @@ Currently supported services are:
 | ESS (Auto Scaling) | Scaling groups, scheduled tasks                         |
 | OSS                | Buckets, objects                                        |
 | RAM                | Users, groups, roles, policies                          |
+| RDS                | Instances                                               |
 | SLB                | Load balancers                                          |
 | VPC                | VPCs, VSwitches, NAT gateways, EIPs                     |
 
